@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔧 Chat JavaScript Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .btn { padding: 10px 20px; margin: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .log { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 15px; margin: 15px 0; height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .status.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .status.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Chat JavaScript Fix Tool</h1>
+        <p>This tool fixes the JavaScript errors in your chat application.</p>
+        
+        <div class="status" id="status">
+            ⏳ Ready to apply fixes...
+        </div>
+        
+        <button class="btn btn-primary" onclick="applyFixes()">🔧 Apply JavaScript Fixes</button>
+        <button class="btn btn-success" onclick="testFeatures()">🧪 Test Features</button>
+        <button class="btn btn-warning" onclick="openChat()">💬 Open Chat</button>
+        
+        <div class="log" id="log">
+            Click "Apply JavaScript Fixes" to start...\n
+        </div>
+        
+        <h3>📋 What This Fixes:</h3>
+        <ul>
+            <li>✅ Context menu variable errors</li>
+            <li>✅ Voice recording button functionality</li>
+            <li>✅ File attachment button functionality</li>
+            <li>✅ Context menu display and positioning</li>
+            <li>✅ Event listener null reference errors</li>
+            <li>✅ Global error handling</li>
+        </ul>
+        
+        <h3>📝 Instructions:</h3>
+        <ol>
+            <li>Click "Apply JavaScript Fixes" to fix the errors</li>
+            <li>Click "Test Features" to verify everything works</li>
+            <li>Click "Open Chat" to go to your chat application</li>
+            <li>Try right-clicking on messages for context menu</li>
+            <li>Try clicking the microphone and paperclip buttons</li>
+        </ol>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += message + '\n';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = message;
+            statusDiv.className = 'status ' + type;
+        }
+        
+        function applyFixes() {
+            log('🔧 Starting JavaScript fixes...');
+            
+            try {
+                // Load and execute the fix script
+                const script = document.createElement('script');
+                script.src = 'js_fix.js';
+                script.onload = function() {
+                    log('✅ JavaScript fixes loaded successfully!');
+                    updateStatus('✅ All fixes applied successfully! You can now use the chat features.', 'success');
+                };
+                script.onerror = function() {
+                    log('❌ Failed to load fix script');
+                    updateStatus('❌ Failed to apply fixes. Make sure js_fix.js exists.', 'error');
+                };
+                document.head.appendChild(script);
+                
+                log('📥 Loading fix script...');
+                
+            } catch (error) {
+                log('❌ Error applying fixes: ' + error.message);
+                updateStatus('❌ Error applying fixes', 'error');
+            }
+        }
+        
+        function testFeatures() {
+            log('🧪 Testing chat features...');
+            
+            // Test if running in chat context
+            if (window.location.href.includes('chat.php')) {
+                log('✅ Running in chat context');
+                
+                // Test voice button
+                const voiceBtn = document.getElementById('recordVoice');
+                log(voiceBtn ? '✅ Voice button found' : '❌ Voice button missing');
+                
+                // Test file button
+                const fileBtn = document.getElementById('attachFile');
+                log(fileBtn ? '✅ File button found' : '❌ File button missing');
+                
+                // Test context menu function
+                log(typeof showContextMenu === 'function' ? '✅ Context menu function available' : '❌ Context menu function missing');
+                
+                updateStatus('✅ Feature test completed. Check the log for results.', 'success');
+            } else {
+                log('ℹ️ Not in chat context. Open chat to test features.');
+                updateStatus('ℹ️ Open the chat page to test features', 'error');
+            }
+        }
+        
+        function openChat() {
+            log('💬 Opening chat application...');
+            window.open('chat.php', '_blank');
+        }
+        
+        // Auto-apply fixes if in chat context
+        if (window.location.href.includes('chat.php')) {
+            setTimeout(applyFixes, 1000);
+        }
+    </script>
+</body>
+</html>

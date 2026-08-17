@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Fix Test - WhatsApp Features</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container-fluid {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 20px;
+            padding: 30px;
+        }
+        h1 {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            box-shadow: 
+                20px 20px 60px #d1d1d1,
+                -20px -20px 60px #ffffff;
+            transition: all 0.3s ease;
+        }
+        .test-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                25px 25px 80px #d1d1d1,
+                -25px -25px 80px #ffffff;
+        }
+        .test-section h3 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .test-section h3 i {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.2em;
+        }
+        .test-result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .success { 
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border-left-color: #28a745;
+        }
+        .error { 
+            background: linear-gradient(135deg, #f8d7da, #f1b0b7);
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+        .info { 
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            color: #0c5460;
+            border-left-color: #17a2b8;
+        }
+        .voice-recording { 
+            display: none; 
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px solid #2196f3;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(33, 150, 243, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0); }
+        }
+        .btn {
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover:before {
+            left: 100%;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            box-shadow: 0 4px 15px rgba(86, 171, 47, 0.4);
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(86, 171, 47, 0.6);
+        }
+        .btn-warning {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+        }
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
+        }
+        .form-control {
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            transform: translateY(-2px);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        #debugConsole {
+            height: 200px;
+            overflow-y: auto;
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border-radius: 15px;
+            color: #ecf0f1;
+            border: 2px solid #34495e;
+        }
+        #debugConsole::-webkit-scrollbar {
+            width: 8px;
+        }
+        #debugConsole::-webkit-scrollbar-track {
+            background: #2c3e50;
+            border-radius: 10px;
+        }
+        #debugConsole::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+        .row {
+            margin: 0;
+        }
+        .col-md-6 {
+            padding: 10px;
+        }
+        .voice-timer {
+            font-weight: bold;
+            color: #d32f2f;
+            font-size: 1.1em;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4 fade-in">
+        <h1><i class="fas fa-comments"></i> WhatsApp-like Features Test Suite</h1>
+        <p class="text-muted text-center">Advanced testing platform for file upload, voice messages, and voice calls</p>
+
+        <!-- Test Results Display -->
+        <div id="testResults" class="mb-4"></div>
+
+        <!-- 1. File Upload Test -->
+        <div class="test-section">
+            <h3><i class="fas fa-cloud-upload-alt"></i> File Upload Test</h3>
+            <p class="text-muted">Test uploading different file types to verify upload functionality</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-image"></i> Upload Image:</label>
+                    <input type="file" id="testImageInput" class="form-control" accept="image/*">
+                    <button id="testImageUpload" class="btn btn-primary mt-3 w-100">
+                        <i class="fas fa-upload"></i> Test Image Upload
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-file"></i> Upload Document:</label>
+                    <input type="file" id="testFileInput" class="form-control">
+                    <button id="testFileUpload" class="btn btn-primary mt-3 w-100">
+                        <i class="fas fa-upload"></i> Test File Upload
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Voice Message Test -->
+        <div class="test-section">
+            <h3><i class="fas fa-microphone-alt"></i> Voice Message Test</h3>
+            <p class="text-muted">Test voice message recording and sending functionality</p>
+            
+            <div class="text-center">
+                <button id="testVoiceRecord" class="btn btn-success btn-lg">
+                    <i class="fas fa-microphone"></i> Start Voice Recording
+                </button>
+            </div>
+            
+            <div id="voiceRecording" class="voice-recording">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-microphone text-danger me-2" style="font-size: 1.5em;"></i>
+                        <span class="fw-bold">Recording... <span class="voice-timer">00:00</span></span>
+                    </div>
+                    <div>
+                        <button id="voiceSend" class="btn btn-sm btn-primary me-2">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                        <button id="voiceCancel" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Voice Call Test -->
+        <div class="test-section">
+            <h3><i class="fas fa-phone-alt"></i> Voice Call Test</h3>
+            <p class="text-muted">Test voice calling functionality with WebRTC demo</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-user"></i> User ID to call:</label>
+                    <input type="text" id="testCallUserId" class="form-control" placeholder="Enter User ID to call" value="">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-user-tag"></i> User Name:</label>
+                    <input type="text" id="testCallUserName" class="form-control" placeholder="Enter User Name" value="Test User">
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <button id="testVoiceCall" class="btn btn-warning btn-lg">
+                    <i class="fas fa-phone"></i> Start Voice Call
+                </button>
+            </div>
+        </div>
+
+        <!-- Debug Console -->
+        <div class="test-section">
+            <h3><i class="fas fa-terminal"></i> Debug Console</h3>
+            <p class="text-muted">Real-time logging and debugging information</p>
+            <div id="debugConsole"></div>
+            <div class="text-center mt-3">
+                <button id="clearConsole" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-broom"></i> Clear Console
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/voice-call.js"></script>
+    <script>
+        let availableUsers = [];
+        let defaultUserId = '1';
+
+        // Load available users from database
+        async function loadAvailableUsers() {
+            try {
+                debugLog('Loading available users from database...');
+                const response = await fetch('check_users.php');
+                const data = await response.json();
+                
+                if (data.success && data.users.length > 0) {
+                    availableUsers = data.users;
+                    defaultUserId = data.users[0].id.toString();
+                    
+                    debugLog('Available users loaded:', data.users);
+                    showTestResult(`✅ Found ${data.count} users in database. Using User ID: ${defaultUserId}`, 'success');
+                    
+                    // Update the form with valid user ID
+                    document.getElementById('testCallUserId').value = defaultUserId;
+                    
+                } else {
+                    debugLog('No users found in database');
+                    showTestResult('❌ No users found in database. Please create a user first.', 'error');
+                }
+            } catch (error) {
+                debugLog('Error loading users:', error);
+                showTestResult(`❌ Error loading users: ${error.message}`, 'error');
+            }
+        }
+
+        // Debug function
+        function debugLog(message, data = null) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            console.log(logEntry, data);
+            
+            const debugConsole = document.getElementById('debugConsole');
+            const logDiv = document.createElement('div');
+            logDiv.innerHTML = `<span style="color: #666;">${timestamp}</span> ${message}`;
+            if (data) {
+                logDiv.innerHTML += ` <span style="color: #007bff;">${JSON.stringify(data)}</span>`;
+            }
+            debugConsole.appendChild(logDiv);
+            debugConsole.scrollTop = debugConsole.scrollHeight;
+        }
+
+        function showTestResult(message, type = 'info') {
+            const resultsDiv = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = `<strong>${type.toUpperCase()}:</strong> ${message}`;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('Page loaded, initializing tests...');
+            
+            // First, load available users
+            loadAvailableUsers().then(() => {
+                // Test 1: File Upload
+                initFileUploadTest();
+                
+                // Test 2: Voice Messages
+                initVoiceMessageTest();
+                
+                // Test 3: Voice Calls
+                initVoiceCallTest();
+            });
+            
+            // Clear console button
+            document.getElementById('clearConsole').addEventListener('click', () => {
+                document.getElementById('debugConsole').innerHTML = '';
+            });
+        });
+
+        // File Upload Test
+        function initFileUploadTest() {
+            debugLog('Initializing file upload test...');
+            
+            document.getElementById('testImageUpload').addEventListener('click', () => {
+                const fileInput = document.getElementById('testImageInput');
+                if (fileInput.files.length === 0) {
+                    showTestResult('Please select an image file first', 'error');
+                    return;
+                }
+                testFileUpload(fileInput.files[0], 'image');
+            });
+
+            document.getElementById('testFileUpload').addEventListener('click', () => {
+                const fileInput = document.getElementById('testFileInput');
+                if (fileInput.files.length === 0) {
+                    showTestResult('Please select a file first', 'error');
+                    return;
+                }
+                testFileUpload(fileInput.files[0], 'file');
+            });
+        }
+
+        async function testFileUpload(file, category) {
+            debugLog(`Testing ${category} upload:`, {name: file.name, type: file.type, size: file.size});
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('category', category);
+            formData.append('chat_type', 'private');
+            formData.append('chat_id', defaultUserId); // Use dynamic user ID
+            formData.append('action', 'upload');
+
+            try {
+                showTestResult(`Uploading ${file.name}...`, 'info');
+                
+                const response = await fetch('file_upload_api.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                debugLog('Upload response:', data);
+                
+                if (data.success) {
+                    showTestResult(`✅ File upload successful: ${file.name}`, 'success');
+                } else {
+                    showTestResult(`❌ File upload failed: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                debugLog('Upload error:', error);
+                showTestResult(`❌ Upload error: ${error.message}`, 'error');
+            }
+        }
+
+        // Voice Message Test
+        function initVoiceMessageTest() {
+            debugLog('Initializing voice message test...');
+            
+            let voiceRecorder = null;
+            
+            document.getElementById('testVoiceRecord').addEventListener('click', async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    debugLog('✅ Microphone access granted');
+                    showTestResult('Microphone access granted, starting recording...', 'success');
+                    
+                    voiceRecorder = {
+                        mediaRecorder: new MediaRecorder(stream),
+                        audioChunks: [],
+                        startTime: Date.now(),
+                        isRecording: true,
+                        timer: null
+                    };
+
+                    voiceRecorder.mediaRecorder.ondataavailable = (event) => {
+                        voiceRecorder.audioChunks.push(event.data);
+                    };
+
+                    voiceRecorder.mediaRecorder.onstop = () => {
+                        debugLog('Recording stopped');
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    voiceRecorder.mediaRecorder.start();
+                    document.getElementById('voiceRecording').style.display = 'block';
+                    document.getElementById('testVoiceRecord').style.display = 'none';
+                    
+                    // Start timer
+                    voiceRecorder.timer = setInterval(() => {
+                        const elapsed = Math.floor((Date.now() - voiceRecorder.startTime) / 1000);
+                        const minutes = Math.floor(elapsed / 60);
+                        const seconds = elapsed % 60;
+                        document.querySelector('.voice-timer').textContent = 
+                            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }, 1000);
+                    
+                } catch (error) {
+                    debugLog('❌ Microphone access denied:', error);
+                    showTestResult('Microphone access denied or not available', 'error');
+                }
+            });
+
+            document.getElementById('voiceSend').addEventListener('click', () => {
+                if (voiceRecorder && voiceRecorder.isRecording) {
+                    voiceRecorder.mediaRecorder.stop();
+                    voiceRecorder.isRecording = false;
+                    clearInterval(voiceRecorder.timer);
+                    
+                    setTimeout(() => sendVoiceMessage(voiceRecorder), 100);
+                }
+            });
+
+            document.getElementById('voiceCancel').addEventListener('click', () => {
+                if (voiceRecorder) {
+                    if (voiceRecorder.isRecording) {
+                        voiceRecorder.mediaRecorder.stop();
+                    }
+                    clearInterval(voiceRecorder.timer);
+                    voiceRecorder = null;
+                }
+                document.getElementById('voiceRecording').style.display = 'none';
+                document.getElementById('testVoiceRecord').style.display = 'block';
+                showTestResult('Voice recording cancelled', 'info');
+            });
+        }
+
+        async function sendVoiceMessage(voiceRecorder) {
+            debugLog('Sending voice message...');
+            
+            const audioBlob = new Blob(voiceRecorder.audioChunks, { type: 'audio/webm' });
+            const duration = Math.floor((Date.now() - voiceRecorder.startTime) / 1000);
+
+            const formData = new FormData();
+            formData.append('voice', audioBlob, 'voice_message.webm');
+            formData.append('peer_id', defaultUserId); // Use dynamic user ID
+            formData.append('duration', duration);
+            formData.append('action', 'send_voice');
+
+            try {
+                showTestResult('Sending voice message...', 'info');
+                
+                const response = await fetch('voice_api.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                debugLog('Voice message response:', data);
+                
+                if (data.success) {
+                    showTestResult(`✅ Voice message sent successfully (${duration}s)`, 'success');
+                } else {
+                    showTestResult(`❌ Voice message failed: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                debugLog('Voice message error:', error);
+                showTestResult(`❌ Voice message error: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('voiceRecording').style.display = 'none';
+                document.getElementById('testVoiceRecord').style.display = 'block';
+            }
+        }
+
+        // Voice Call Test
+        function initVoiceCallTest() {
+            debugLog('Initializing voice call test...');
+            
+            // Check if VoiceCall class is available
+            if (typeof VoiceCall === 'undefined') {
+                debugLog('❌ VoiceCall class not found');
+                showTestResult('VoiceCall class not loaded - check voice-call.js', 'error');
+                document.getElementById('testVoiceCall').disabled = true;
+                return;
+            }
+            
+            debugLog('✅ VoiceCall class found');
+            showTestResult('VoiceCall class loaded successfully', 'success');
+            
+            const voiceCall = new VoiceCall({
+                userId: defaultUserId, // Use dynamic user ID
+                peerId: defaultUserId, // Default peer ID
+                onCallInitiated: (data) => {
+                    debugLog('Call initiated:', data);
+                    showTestResult('✅ Call initiated successfully', 'success');
+                },
+                onCallReceived: (data) => {
+                    debugLog('Call received:', data);
+                    showTestResult(`📞 Incoming call from ${data.caller_name}`, 'info');
+                },
+                onCallConnected: () => {
+                    debugLog('Call connected');
+                    showTestResult('✅ Call connected', 'success');
+                },
+                onCallEnded: (data) => {
+                    debugLog('Call ended:', data);
+                    showTestResult('📞 Call ended', 'info');
+                },
+                onError: (error) => {
+                    debugLog('Call error:', error);
+                    showTestResult(`❌ Call error: ${error}`, 'error');
+                }
+            });
+            
+            document.getElementById('testVoiceCall').addEventListener('click', () => {
+                const userId = document.getElementById('testCallUserId').value;
+                const userName = document.getElementById('testCallUserName').value;
+                
+                if (!userId || !userName) {
+                    showTestResult('Please enter both User ID and User Name', 'error');
+                    return;
+                }
+                
+                // Update the voiceCall instance with the new peer ID
+                voiceCall.options.peerId = userId;
+                
+                debugLog(`Starting voice call to ${userName} (${userId})`);
+                voiceCall.startCall(userId, userName);
+            });
+        }
+    </script>
+</body>
+</html>

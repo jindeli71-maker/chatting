@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Feature Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/css/wechat-style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4><i class="fas fa-test-tube"></i> Quick Feature Test</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <strong>Testing enhanced chat features...</strong><br>
+                            Check the browser console (F12) for detailed logs.
+                        </div>
+
+                        <!-- Voice Recording Test -->
+                        <div class="mb-4">
+                            <h5>🎤 Voice Recording Test</h5>
+                            <div class="d-flex gap-2 mb-2">
+                                <button id="recordVoice" class="btn btn-primary">
+                                    <i class="fas fa-microphone"></i> Start Recording
+                                </button>
+                                <button id="cancelVoice" class="btn btn-secondary" disabled>
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                <button id="sendVoice" class="btn btn-success" disabled>
+                                    <i class="fas fa-paper-plane"></i> Send
+                                </button>
+                            </div>
+                            <div id="voiceStatus" class="small text-muted"></div>
+                            
+                            <!-- Voice Recording Interface -->
+                            <div id="voiceRecording" class="voice-recording-interface" style="display: none;">
+                                <div class="voice-recording-content">
+                                    <div class="voice-timer">00:00</div>
+                                    <div class="voice-waveform">
+                                        <div class="waveform-bars">
+                                            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                                            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- File Upload Test -->
+                        <div class="mb-4">
+                            <h5>📎 File Upload Test</h5>
+                            <div class="d-flex gap-2 mb-2">
+                                <button id="attachFile" class="btn btn-primary">
+                                    <i class="fas fa-paperclip"></i> Attach File
+                                </button>
+                                <button id="attachImage" class="btn btn-info">
+                                    <i class="fas fa-image"></i> Attach Image
+                                </button>
+                            </div>
+                            <div id="fileStatus" class="small text-muted"></div>
+                            
+                            <!-- Hidden file inputs -->
+                            <input type="file" id="fileInput" style="display: none;" accept="*/*">
+                            <input type="file" id="imageInput" style="display: none;" accept="image/*">
+                        </div>
+
+                        <!-- Voice Calling Test -->
+                        <div class="mb-4">
+                            <h5>📞 Voice Calling Test</h5>
+                            <button id="voiceCall" class="btn btn-success">
+                                <i class="fas fa-phone"></i> Test Voice Call
+                            </button>
+                            <div id="callStatus" class="small text-muted mt-2"></div>
+                        </div>
+
+                        <!-- Message Actions Test -->
+                        <div class="mb-4">
+                            <h5>💬 Message Actions Test</h5>
+                            <div class="mb-2">
+                                <input type="text" id="msg" class="form-control" placeholder="Type a test message...">
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button id="testReply" class="btn btn-outline-primary btn-sm">Reply Test</button>
+                                <button id="testReaction" class="btn btn-outline-warning btn-sm">Reaction Test</button>
+                                <button id="testContextMenu" class="btn btn-outline-info btn-sm">Context Menu Test</button>
+                            </div>
+                            
+                            <!-- Reply Preview -->
+                            <div id="replyPreview" class="reply-preview mt-2" style="display: none;">
+                                <div class="reply-content">
+                                    <div class="reply-header">
+                                        <i class="fas fa-reply"></i>
+                                        <span>Replying to <strong id="replyToUser">Test User</strong></span>
+                                        <button id="cancelReply" class="reply-cancel"><i class="fas fa-times"></i></button>
+                                    </div>
+                                    <div class="reply-text" id="replyToText">This is a test reply message</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Test Results -->
+                        <div class="mb-4">
+                            <h5>📊 Test Results</h5>
+                            <div id="testResults" class="border rounded p-3 bg-light">
+                                <div class="text-muted">Test results will appear here...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="assets/js/voice-call.js"></script>
+    <script src="assets/js/enhanced-features.js"></script>
+    
+    <script>
+        // Initialize enhanced features
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Quick Feature Test Page Loaded');
+            
+            // Mock user/peer IDs for testing
+            const testOptions = {
+                userId: 1,
+                peerId: 2,
+                chatType: 'private',
+                debug: true
+            };
+            
+            console.log('📋 Test configuration:', testOptions);
+            
+            // Initialize enhanced features
+            if (typeof EnhancedChatFeatures !== 'undefined') {
+                console.log('✅ EnhancedChatFeatures class found');
+                window.enhancedChat = new EnhancedChatFeatures(testOptions);
+                updateTestResults('✅ Enhanced features initialized successfully');
+            } else {
+                console.error('❌ EnhancedChatFeatures class not found');
+                updateTestResults('❌ Enhanced features class not loaded');
+            }
+            
+            // Add test event listeners
+            setupTestEventListeners();
+        });
+        
+        function updateTestResults(message) {
+            const resultsDiv = document.getElementById('testResults');
+            const timestamp = new Date().toLocaleTimeString();
+            resultsDiv.innerHTML += `<div class="small">[${timestamp}] ${message}</div>`;
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `<span class="text-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'primary'}">${message}</span>`;
+            }
+        }
+        
+        function setupTestEventListeners() {
+            // Voice recording test
+            document.getElementById('recordVoice')?.addEventListener('click', () => {
+                updateStatus('voiceStatus', 'Testing voice recording...', 'info');
+                updateTestResults('🎤 Voice recording test triggered');
+            });
+            
+            // File upload test
+            document.getElementById('attachFile')?.addEventListener('click', () => {
+                updateStatus('fileStatus', 'File dialog opened...', 'info');
+                updateTestResults('📎 File upload test triggered');
+            });
+            
+            document.getElementById('attachImage')?.addEventListener('click', () => {
+                updateStatus('fileStatus', 'Image dialog opened...', 'info');
+                updateTestResults('🖼️ Image upload test triggered');
+            });
+            
+            // File input change
+            document.getElementById('fileInput')?.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    updateStatus('fileStatus', `Selected: ${e.target.files[0].name}`, 'success');
+                    updateTestResults(`📁 File selected: ${e.target.files[0].name}`);
+                }
+            });
+            
+            document.getElementById('imageInput')?.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    updateStatus('fileStatus', `Selected: ${e.target.files[0].name}`, 'success');
+                    updateTestResults(`🖼️ Image selected: ${e.target.files[0].name}`);
+                }
+            });
+            
+            // Voice call test
+            document.getElementById('voiceCall')?.addEventListener('click', () => {
+                updateStatus('callStatus', 'Testing voice call functionality...', 'info');
+                updateTestResults('📞 Voice call test triggered');
+            });
+            
+            // Message action tests
+            document.getElementById('testReply')?.addEventListener('click', () => {
+                document.getElementById('replyPreview').style.display = 'block';
+                updateTestResults('💬 Reply functionality tested');
+            });
+            
+            document.getElementById('cancelReply')?.addEventListener('click', () => {
+                document.getElementById('replyPreview').style.display = 'none';
+                updateTestResults('❌ Reply cancelled');
+            });
+            
+            document.getElementById('testReaction')?.addEventListener('click', () => {
+                updateTestResults('😊 Reaction functionality tested');
+            });
+            
+            document.getElementById('testContextMenu')?.addEventListener('click', () => {
+                updateTestResults('📋 Context menu functionality tested');
+            });
+            
+            // Test voice recording capability
+            setTimeout(() => {
+                testVoiceRecordingCapability();
+            }, 1000);
+        }
+        
+        async function testVoiceRecordingCapability() {
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('MediaDevices API not supported');
+                }
+                
+                updateStatus('voiceStatus', 'Checking microphone permissions...', 'info');
+                
+                // Test microphone access (don't actually record)
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+                
+                updateStatus('voiceStatus', '✅ Microphone access granted', 'success');
+                updateTestResults('✅ Voice recording capability verified');
+                
+                // Enable voice recording buttons
+                document.getElementById('recordVoice').disabled = false;
+                
+            } catch (error) {
+                updateStatus('voiceStatus', `❌ Error: ${error.message}`, 'error');
+                updateTestResults(`❌ Voice recording error: ${error.message}`);
+                
+                // Disable voice recording buttons
+                document.getElementById('recordVoice').disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>

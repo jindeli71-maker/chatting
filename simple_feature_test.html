@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Chat Features Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .status-info { background: #d1ecf1; color: #0c5460; }
+        .status-success { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .voice-recording-interface {
+            background: #e8f5e8;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .voice-timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .waveform {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            height: 40px;
+            gap: 2px;
+        }
+        
+        .bar {
+            width: 4px;
+            background: #28a745;
+            border-radius: 2px;
+            animation: wave 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes wave {
+            0%, 100% { height: 6px; }
+            50% { height: 30px; }
+        }
+        
+        .reply-preview {
+            background: #e8f5e8;
+            border-left: 4px solid #28a745;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Enhanced Chat Features Test</h1>
+            <p>Testing all the new chat functionality</p>
+        </div>
+        
+        <div class="content">
+            <div class="alert alert-info">
+                <strong>🔍 Debug Mode Active</strong><br>
+                Open browser console (F12) to see detailed logs and error messages.
+            </div>
+            
+            <!-- Feature Status -->
+            <div class="test-section">
+                <h3>📊 Feature Status</h3>
+                <div id="featureStatus">
+                    <div>🔄 Checking feature availability...</div>
+                </div>
+            </div>
+            
+            <!-- Voice Recording Test -->
+            <div class="test-section">
+                <h3>🎤 Voice Recording Test</h3>
+                <div>
+                    <button id="recordVoice" class="btn btn-primary">
+                        🎤 Start Recording
+                    </button>
+                    <button id="cancelVoice" class="btn btn-secondary" disabled>
+                        ❌ Cancel
+                    </button>
+                    <button id="sendVoice" class="btn btn-success" disabled>
+                        📤 Send
+                    </button>
+                </div>
+                <div id="voiceStatus" class="status status-info" style="display: none;"></div>
+                
+                <!-- Voice Recording Interface -->
+                <div id="voiceRecording" class="voice-recording-interface">
+                    <div class="voice-timer">00:00</div>
+                    <div class="waveform">
+                        <div class="bar" style="animation-delay: 0s;"></div>
+                        <div class="bar" style="animation-delay: 0.1s;"></div>
+                        <div class="bar" style="animation-delay: 0.2s;"></div>
+                        <div class="bar" style="animation-delay: 0.3s;"></div>
+                        <div class="bar" style="animation-delay: 0.4s;"></div>
+                        <div class="bar" style="animation-delay: 0.3s;"></div>
+                        <div class="bar" style="animation-delay: 0.2s;"></div>
+                        <div class="bar" style="animation-delay: 0.1s;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- File Upload Test -->
+            <div class="test-section">
+                <h3>📎 File Upload Test</h3>
+                <div>
+                    <button id="attachFile" class="btn btn-primary">
+                        📎 Attach File
+                    </button>
+                    <button id="attachImage" class="btn btn-warning">
+                        🖼️ Attach Image
+                    </button>
+                </div>
+                <div id="fileStatus" class="status status-info" style="display: none;"></div>
+                
+                <!-- Hidden file inputs -->
+                <input type="file" id="fileInput" style="display: none;" accept="*/*">
+                <input type="file" id="imageInput" style="display: none;" accept="image/*">
+            </div>
+            
+            <!-- Voice Calling Test -->
+            <div class="test-section">
+                <h3>📞 Voice Calling Test</h3>
+                <div>
+                    <button id="voiceCall" class="btn btn-success">
+                        📞 Test Voice Call
+                    </button>
+                </div>
+                <div id="callStatus" class="status status-info" style="display: none;"></div>
+            </div>
+            
+            <!-- Message Actions Test -->
+            <div class="test-section">
+                <h3>💬 Message Actions Test</h3>
+                <div>
+                    <input type="text" id="msg" class="input-field" placeholder="Type a test message...">
+                    <div>
+                        <button id="testReply" class="btn btn-primary">💬 Reply Test</button>
+                        <button id="testReaction" class="btn btn-warning">😊 Reaction Test</button>
+                        <button id="testContextMenu" class="btn btn-secondary">📋 Context Menu</button>
+                    </div>
+                    
+                    <!-- Reply Preview -->
+                    <div id="replyPreview" class="reply-preview">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span><strong>💬 Replying to Test User</strong></span>
+                            <button id="cancelReply" style="background: none; border: none; cursor: pointer;">❌</button>
+                        </div>
+                        <div style="margin-top: 5px; color: #666;">This is a test reply message</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Test Log -->
+            <div class="test-section">
+                <h3>📝 Test Log</h3>
+                <div id="testLog" class="log">Initializing tests...\n</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load scripts (if they exist) -->
+    <script src="assets/js/voice-call.js"></script>
+    <script src="assets/js/enhanced-features.js"></script>
+    
+    <script>
+        // Test log function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('testLog');
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[Test] ${message}`);
+        }
+        
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.className = `status status-${type}`;
+                element.style.display = 'block';
+            }
+        }
+        
+        function updateFeatureStatus() {
+            const statusDiv = document.getElementById('featureStatus');
+            let html = '';
+            
+            // Check JavaScript classes
+            const hasEnhancedFeatures = typeof EnhancedChatFeatures !== 'undefined';
+            const hasVoiceCall = typeof VoiceCall !== 'undefined';
+            
+            html += `<div>EnhancedChatFeatures: ${hasEnhancedFeatures ? '✅ Loaded' : '❌ Missing'}</div>`;
+            html += `<div>VoiceCall: ${hasVoiceCall ? '✅ Loaded' : '❌ Missing'}</div>`;
+            
+            // Check DOM elements
+            const elements = {
+                'recordVoice': 'Voice Record Button',
+                'attachFile': 'File Attach Button',
+                'voiceRecording': 'Voice Interface',
+                'msg': 'Message Input'
+            };
+            
+            for (const [id, name] of Object.entries(elements)) {
+                const exists = !!document.getElementById(id);
+                html += `<div>${name}: ${exists ? '✅ Found' : '❌ Missing'}</div>`;
+            }
+            
+            statusDiv.innerHTML = html;
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Enhanced Chat Features Test Page Loaded');
+            
+            // Update feature status
+            updateFeatureStatus();
+            
+            // Test configuration
+            const testOptions = {
+                userId: 1,
+                peerId: 2,
+                chatType: 'private',
+                debug: true
+            };
+            
+            log(`📋 Test configuration: ${JSON.stringify(testOptions)}`);
+            
+            // Try to initialize enhanced features
+            if (typeof EnhancedChatFeatures !== 'undefined') {
+                try {
+                    log('✅ EnhancedChatFeatures class found, initializing...');
+                    window.enhancedChat = new EnhancedChatFeatures(testOptions);
+                    log('✅ Enhanced features initialized successfully');
+                } catch (error) {
+                    log(`❌ Error initializing enhanced features: ${error.message}`);
+                }
+            } else {
+                log('❌ EnhancedChatFeatures class not found - script may not be loaded');
+            }
+            
+            // Set up test event listeners
+            setupTestEventListeners();
+            
+            // Test voice recording capability
+            setTimeout(testVoiceCapability, 1000);
+        });
+        
+        function setupTestEventListeners() {
+            log('🔧 Setting up test event listeners...');
+            
+            // Voice recording test
+            const recordBtn = document.getElementById('recordVoice');
+            if (recordBtn) {
+                recordBtn.addEventListener('click', () => {
+                    log('🎤 Voice recording button clicked');
+                    updateStatus('voiceStatus', 'Testing voice recording...', 'info');
+                    
+                    // Show voice interface
+                    document.getElementById('voiceRecording').style.display = 'block';
+                    recordBtn.disabled = true;
+                    document.getElementById('cancelVoice').disabled = false;
+                    document.getElementById('sendVoice').disabled = false;
+                });
+            }
+            
+            // Cancel voice
+            const cancelBtn = document.getElementById('cancelVoice');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => {
+                    log('❌ Voice recording cancelled');
+                    document.getElementById('voiceRecording').style.display = 'none';
+                    document.getElementById('recordVoice').disabled = false;
+                    cancelBtn.disabled = true;
+                    document.getElementById('sendVoice').disabled = true;
+                    updateStatus('voiceStatus', 'Voice recording cancelled', 'info');
+                });
+            }
+            
+            // Send voice
+            const sendBtn = document.getElementById('sendVoice');
+            if (sendBtn) {
+                sendBtn.addEventListener('click', () => {
+                    log('📤 Voice message send clicked');
+                    document.getElementById('voiceRecording').style.display = 'none';
+                    document.getElementById('recordVoice').disabled = false;
+                    document.getElementById('cancelVoice').disabled = true;
+                    sendBtn.disabled = true;
+                    updateStatus('voiceStatus', 'Voice message sent (test mode)', 'success');
+                });
+            }
+            
+            // File upload test
+            const attachFileBtn = document.getElementById('attachFile');
+            const fileInput = document.getElementById('fileInput');
+            if (attachFileBtn && fileInput) {
+                attachFileBtn.addEventListener('click', () => {
+                    log('📎 File attach button clicked');
+                    fileInput.click();
+                });
+                
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        const file = e.target.files[0];
+                        log(`📁 File selected: ${file.name} (${file.size} bytes)`);
+                        updateStatus('fileStatus', `Selected: ${file.name}`, 'success');
+                    }
+                });
+            }
+            
+            // Image upload test
+            const attachImageBtn = document.getElementById('attachImage');
+            const imageInput = document.getElementById('imageInput');
+            if (attachImageBtn && imageInput) {
+                attachImageBtn.addEventListener('click', () => {
+                    log('🖼️ Image attach button clicked');
+                    imageInput.click();
+                });
+                
+                imageInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        const file = e.target.files[0];
+                        log(`🖼️ Image selected: ${file.name} (${file.size} bytes)`);
+                        updateStatus('fileStatus', `Selected: ${file.name}`, 'success');
+                    }
+                });
+            }
+            
+            // Voice call test
+            const voiceCallBtn = document.getElementById('voiceCall');
+            if (voiceCallBtn) {
+                voiceCallBtn.addEventListener('click', () => {
+                    log('📞 Voice call button clicked');
+                    updateStatus('callStatus', 'Testing voice call functionality...', 'info');
+                    
+                    // Simulate call test
+                    setTimeout(() => {
+                        updateStatus('callStatus', 'Voice call test completed (no actual call made)', 'success');
+                    }, 2000);
+                });
+            }
+            
+            // Message action tests
+            const testReplyBtn = document.getElementById('testReply');
+            if (testReplyBtn) {
+                testReplyBtn.addEventListener('click', () => {
+                    log('💬 Reply test button clicked');
+                    document.getElementById('replyPreview').style.display = 'block';
+                });
+            }
+            
+            const cancelReplyBtn = document.getElementById('cancelReply');
+            if (cancelReplyBtn) {
+                cancelReplyBtn.addEventListener('click', () => {
+                    log('❌ Reply cancelled');
+                    document.getElementById('replyPreview').style.display = 'none';
+                });
+            }
+            
+            const testReactionBtn = document.getElementById('testReaction');
+            if (testReactionBtn) {
+                testReactionBtn.addEventListener('click', () => {
+                    log('😊 Reaction test triggered');
+                    alert('Reaction test: 👍❤️😂😮😢😡');
+                });
+            }
+            
+            const testContextMenuBtn = document.getElementById('testContextMenu');
+            if (testContextMenuBtn) {
+                testContextMenuBtn.addEventListener('click', () => {
+                    log('📋 Context menu test triggered');
+                    alert('Context menu would appear here with options: Reply, React, Copy, Forward, Pin, Edit, Delete');
+                });
+            }
+            
+            log('✅ Test event listeners set up successfully');
+        }
+        
+        async function testVoiceCapability() {
+            log('🔍 Testing voice recording capability...');
+            
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('MediaDevices API not supported by this browser');
+                }
+                
+                log('🎤 Requesting microphone access...');
+                updateStatus('voiceStatus', 'Checking microphone permissions...', 'info');
+                
+                // Test microphone access
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                // Immediately stop the stream
+                stream.getTracks().forEach(track => track.stop());
+                
+                log('✅ Microphone access granted - voice recording is supported');
+                updateStatus('voiceStatus', '✅ Voice recording supported', 'success');
+                
+            } catch (error) {
+                log(`❌ Voice recording error: ${error.message}`);
+                updateStatus('voiceStatus', `❌ Error: ${error.message}`, 'error');
+                
+                // Disable voice recording button
+                const recordBtn = document.getElementById('recordVoice');
+                if (recordBtn) {
+                    recordBtn.disabled = true;
+                    recordBtn.textContent = '🎤 Not Supported';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

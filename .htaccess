@@ -1,0 +1,22 @@
+# Chatting app - cPanel / Apache
+Options -Indexes
+
+# Prefer HTTPS (needed for microphone / voice calls)
+# Uncomment after SSL is active:
+# RewriteEngine On
+# RewriteCond %{HTTPS} off
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+</IfModule>
+
+# Block sensitive folders/files if somehow exposed
+<FilesMatch "\.(db|sqlite|sql|md|log)$">
+	<IfModule mod_authz_core.c>
+		Require all denied
+	</IfModule>
+	<IfModule !mod_authz_core.c>
+		Deny from all
+	</IfModule>
+</FilesMatch>
