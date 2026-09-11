@@ -169,10 +169,10 @@ $isBlockedByPeer = (bool)$blockedByPeerCheck->fetch();
 					<!-- Main Input Form -->
 					<form id="sendForm" class="wechat-input-group line-composer">
 						<input type="hidden" id="replyToMessageId" value="">
-						<button type="button" id="attachFile" class="input-action-btn" title="Attach">
+						<button type="button" id="attachFile" class="input-action-btn" title="Attach file or image">
 							<i class="fas fa-plus"></i>
 						</button>
-						<button type="button" id="attachImage" class="input-action-btn" title="Emoji / Image">
+						<button type="button" id="emojiBtn" class="input-action-btn" title="Emoji (or press Win + .)">
 							<i class="far fa-smile"></i>
 						</button>
 						<input type="text" id="msg" class="wechat-input" placeholder="Type a message" autocomplete="off">
@@ -181,6 +181,10 @@ $isBlockedByPeer = (bool)$blockedByPeerCheck->fetch();
 						</button>
 						<button type="submit" id="sendBtn" class="wechat-send-btn" title="Send"><i class="fas fa-paper-plane"></i></button>
 					</form>
+					<div id="emojiPanel" class="line-emoji-panel" hidden>
+						<div class="line-emoji-hint">Tip: you can also press <kbd>Win</kbd> + <kbd>.</kbd></div>
+						<div class="line-emoji-grid" id="emojiGrid"></div>
+					</div>
 					
 					<!-- File Upload Hidden Inputs -->
 					<input type="file" id="fileInput" style="display: none;" multiple accept="*/*">
@@ -697,7 +701,7 @@ $isBlockedByPeer = (bool)$blockedByPeerCheck->fetch();
 					showBlockedMessage(result.message || '消息已发出，但被对方拒收了。');
 				} else {
 					console.log('✅ Message sent successfully, adding to chat immediately');
-					addMessageToChat(text, 'me', new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'}), result.message_id);
+					addMessageToChat(text, 'me', result.time || new Date().toLocaleTimeString('en-US', {hour: 'numeric', minute:'2-digit', timeZone: 'Asia/Kuala_Lumpur'}), result.message_id);
 					setTimeout(() => fetchMessages(), 100);
 					messagesSent++;
 				}
@@ -782,7 +786,7 @@ $isBlockedByPeer = (bool)$blockedByPeerCheck->fetch();
 				</div>
 				<div class="wechat-message-bubble">${text}</div>
 			</div>
-			<div class="wechat-message-time">${new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</div>
+			<div class="wechat-message-time">${new Date().toLocaleTimeString('en-US', {hour: 'numeric', minute:'2-digit', timeZone: 'Asia/Kuala_Lumpur'})}</div>
 		`;
 		
 		messagesContainer.appendChild(messageDiv);
@@ -1820,16 +1824,105 @@ $isBlockedByPeer = (bool)$blockedByPeerCheck->fetch();
 	
 	// Initialize File Upload
 	function initializeFileUpload() {
-		document.getElementById('attachFile').addEventListener('click', () => {
-			document.getElementById('fileInput').click();
-		});
+		const attachFile = document.getElementById('attachFile');
+		const fileInput = document.getElementById('fileInput');
+		const imageInput = document.getElementById('imageInput');
+
+		if (attachFile && fileInput) {
+			attachFile.addEventListener('click', () => {
+				// + opens files (images included)
+				fileInput.click();
+			});
+		}
 		
-		document.getElementById('attachImage').addEventListener('click', () => {
-			document.getElementById('imageInput').click();
+		if (fileInput) fileInput.addEventListener('change', handleFileUpload);
+		if (imageInput) imageInput.addEventListener('change', handleImageUpload);
+
+		initializeEmojiButton();
+	}
+
+	function initializeEmojiButton() {
+		// Support new #emojiBtn and legacy live-site #attachImage (smile icon)
+		const emojiBtn = document.getElementById('emojiBtn') || document.getElementById('attachImage');
+		const msgInput = document.getElementById('msg');
+		if (!emojiBtn || !msgInput) return;
+
+		// Ensure smile button never opens a file folder
+		if (emojiBtn.id === 'attachImage') {
+			emojiBtn.id = 'emojiBtn';
+			emojiBtn.title = 'Emoji';
+			emojiBtn.setAttribute('type', 'button');
+		}
+
+		let emojiPanel = document.getElementById('emojiPanel');
+		let emojiGrid = document.getElementById('emojiGrid');
+		if (!emojiPanel) {
+			emojiPanel = document.createElement('div');
+			emojiPanel.id = 'emojiPanel';
+			emojiPanel.className = 'line-emoji-panel';
+			emojiPanel.hidden = true;
+			emojiPanel.innerHTML = '<div class="line-emoji-hint">Pick an emoji</div><div class="line-emoji-grid" id="emojiGrid"></div>';
+			const area = document.querySelector('.wechat-input-area') || emojiBtn.parentElement;
+			area.appendChild(emojiPanel);
+			emojiGrid = document.getElementById('emojiGrid');
+		}
+		if (!emojiGrid) return;
+
+		const emojis = [
+			'😀','😁','😂','🤣','😊','😍','😘','😜','🤗','🤔',
+			'😎','😢','😭','😡','👍','👎','👏','🙏','🔥','✨',
+			'❤️','💕','💔','🎉','🎂','☕','🍕','🌹','💯','✅',
+			'😅','🥰','😴','🤝','💪','👀','🌟','📌','📷','🥳'
+		];
+
+		emojiGrid.innerHTML = emojis.map((e) =>
+			`<button type="button" class="line-emoji-item" data-emoji="${e}" aria-label="emoji">${e}</button>`
+		).join('');
+
+		function insertEmoji(emoji) {
+			const start = msgInput.selectionStart ?? msgInput.value.length;
+			const end = msgInput.selectionEnd ?? msgInput.value.length;
+			msgInput.value = msgInput.value.slice(0, start) + emoji + msgInput.value.slice(end);
+			const caret = start + [...emoji].length;
+			msgInput.focus();
+			try { msgInput.setSelectionRange(caret, caret); } catch (_) {}
+			msgInput.dispatchEvent(new Event('input', { bubbles: true }));
+		}
+
+		function togglePanel(e) {
+			if (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+			}
+			msgInput.focus();
+			if (emojiPanel.hasAttribute('hidden') || emojiPanel.hidden) {
+				emojiPanel.hidden = false;
+				emojiPanel.removeAttribute('hidden');
+			} else {
+				emojiPanel.hidden = true;
+				emojiPanel.setAttribute('hidden', '');
+			}
+			return false;
+		}
+
+		// Capture phase so nothing else can turn this into a file picker
+		emojiBtn.onclick = null;
+		emojiBtn.addEventListener('click', togglePanel, true);
+
+		emojiGrid.onclick = (e) => {
+			const btn = e.target.closest('.line-emoji-item');
+			if (!btn) return;
+			e.preventDefault();
+			e.stopPropagation();
+			insertEmoji(btn.getAttribute('data-emoji') || '');
+		};
+
+		document.addEventListener('click', (e) => {
+			if (e.target.closest('#emojiBtn') || e.target.closest('#emojiPanel')) return;
+			emojiPanel.hidden = true;
+			emojiPanel.setAttribute('hidden', '');
 		});
-		
-		document.getElementById('fileInput').addEventListener('change', handleFileUpload);
-		document.getElementById('imageInput').addEventListener('change', handleImageUpload);
 	}
 	
 	// Handle file upload
@@ -3356,8 +3449,8 @@ $isBlockedByPeer = (bool)$blockedByPeerCheck->fetch();
 		window.__CHAT_PEER_ID__ = <?php echo (int)$peerId; ?>;
 		window.__CHAT_PEER_NAME__ = <?php echo json_encode($peerUsername ?? '', JSON_UNESCAPED_UNICODE); ?>;
 	</script>
-	<script src="assets/js/voice-call.js?v=20260804b"></script>
-	<script src="assets/js/enhanced-features.js?v=20260804b"></script>
+	<script src="assets/js/voice-call.js?v=20260911emoji"></script>
+	<script src="assets/js/enhanced-features.js?v=20260911emoji"></script>
 	<script>
 	(function initLineVoiceCall() {
 		if (typeof VoiceCall === 'undefined') {

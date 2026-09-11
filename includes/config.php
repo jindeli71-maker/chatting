@@ -12,6 +12,10 @@
  */
 const USE_SQLITE = true;
 
+// Display times in Malaysia time; DB stores UTC (see includes/time.php)
+date_default_timezone_set('Asia/Kuala_Lumpur');
+require_once __DIR__ . '/time.php';
+
 // --- MySQL (cPanel) — used only when USE_SQLITE = false ---
 const DB_HOST = 'localhost';
 const DB_NAME = 'your_cpanel_db_name';

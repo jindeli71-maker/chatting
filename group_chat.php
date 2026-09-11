@@ -471,19 +471,24 @@ function createMessageElement(message) {
 }
 
 function formatTime(timeString) {
-	const date = new Date(timeString);
-	const now = new Date();
-	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-	const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-	
-	if (messageDate.getTime() === today.getTime()) {
-		// Today - show time only
-		return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-	} else {
-		// Other day - show date and time
-		return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' +
-			   date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+	if (!timeString) return '';
+	const s = String(timeString).trim();
+	// Server already formatted Malaysia time (e.g. "11:05 PM")
+	if (/^\d{1,2}:\d{2}\s?(AM|PM)$/i.test(s)) {
+		return s;
 	}
+	// Parse DB UTC datetime
+	const normalized = s.includes('T') || s.endsWith('Z') ? s : s.replace(' ', 'T') + 'Z';
+	const date = new Date(normalized);
+	if (Number.isNaN(date.getTime())) {
+		return s;
+	}
+	return date.toLocaleTimeString('en-US', {
+		hour: 'numeric',
+		minute: '2-digit',
+		hour12: true,
+		timeZone: 'Asia/Kuala_Lumpur'
+	});
 }
 
 function escapeHtml(text) {

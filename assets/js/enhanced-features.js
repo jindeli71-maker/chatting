@@ -39,7 +39,7 @@ class EnhancedChatFeatures {
         const requiredElements = {
             'recordVoice': 'Voice recording button',
             'attachFile': 'File attachment button', 
-            'attachImage': 'Image attachment button',
+            'emojiBtn': 'Emoji button (Win + .)',
             'voiceRecording': 'Voice recording interface',
             'replyPreview': 'Reply preview',
             'msg': 'Message input'
@@ -306,13 +306,14 @@ class EnhancedChatFeatures {
         debugLog('Initializing file upload...');
         
         const attachFileBtn = document.getElementById('attachFile');
-        const attachImageBtn = document.getElementById('attachImage');
         const fileInput = document.getElementById('fileInput');
         const imageInput = document.getElementById('imageInput');
 
         if (attachFileBtn && fileInput) {
             debugLog('✅ File attachment elements found');
-            attachFileBtn.addEventListener('click', () => {
+            // Only the + button opens the folder — never the smile/emoji button
+            attachFileBtn.addEventListener('click', (e) => {
+                if (e.target.closest('#emojiBtn') || e.target.closest('.fa-smile')) return;
                 debugLog('File attach button clicked');
                 fileInput.click();
             });
@@ -327,20 +328,11 @@ class EnhancedChatFeatures {
             });
         }
 
-        if (attachImageBtn && imageInput) {
-            debugLog('✅ Image attachment elements found');
-            attachImageBtn.addEventListener('click', () => {
-                debugLog('Image attach button clicked');
-                imageInput.click();
-            });
+        // Image file input change only — never bind the smile/emoji button to it
+        if (imageInput) {
             imageInput.addEventListener('change', (e) => {
                 debugLog('Image input changed', e.target.files);
                 this.handleFileUpload(e, 'image');
-            });
-        } else {
-            debugLog('❌ Image attachment elements missing', {
-                attachImageBtn: !!attachImageBtn,
-                imageInput: !!imageInput
             });
         }
     }

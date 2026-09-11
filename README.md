@@ -6,6 +6,14 @@ A LINE-style web chatting app built with **PHP** and **SQLite** (MySQL/cPanel op
 
 ---
 
+## How to use (video)
+
+A recorded walkthrough of the live site is here:
+
+- Video: [`docs/videos/how-to-use-line-chat.webm`](docs/videos/how-to-use-line-chat.webm)
+- Player page: [`docs/videos/index.html`](docs/videos/index.html)
+- Live app: [https://leekimteck.kolejsynergy.com/Chatting/device_select.php](https://leekimteck.kolejsynergy.com/Chatting/device_select.php)
+
 ## Screenshots
 
 ### Device select

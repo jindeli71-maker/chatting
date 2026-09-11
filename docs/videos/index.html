@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LINE Chat — How to Use</title>
+  <style>
+    :root {
+      --line: #06C755;
+      --bg: #f3faf6;
+      --text: #1a1a1a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(6,199,85,.12), transparent 40%),
+        radial-gradient(circle at 85% 10%, rgba(6,199,85,.08), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px 20px 48px;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; }
+    .brand {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+    }
+    .mark {
+      width: 42px; height: 42px; border-radius: 12px; background: var(--line);
+      color: #fff; font-weight: 800; display: grid; place-items: center;
+    }
+    h1 { margin: 0; font-size: 1.75rem; }
+    .sub { color: #555; margin: 0 0 20px; }
+    video {
+      width: 100%;
+      border-radius: 16px;
+      background: #0f172a;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+    }
+    .steps {
+      margin-top: 28px;
+      background: #fff;
+      border: 1px solid rgba(6,199,85,.18);
+      border-radius: 16px;
+      padding: 20px 22px;
+    }
+    .steps h2 { margin: 0 0 12px; font-size: 1.15rem; }
+    ol { margin: 0; padding-left: 1.2rem; line-height: 1.55; color: #333; }
+    a { color: var(--line); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <div class="mark">L</div>
+      <h1>LINE Chat — How to Use</h1>
+    </div>
+    <p class="sub">
+      Walkthrough recorded from
+      <a href="https://leekimteck.kolejsynergy.com/Chatting/device_select.php" target="_blank" rel="noopener">
+        leekimteck.kolejsynergy.com/Chatting
+      </a>
+    </p>
+
+    <video controls playsinline>
+      <source src="how-to-use-two-browser-chat.mp4" type="video/mp4">
+      <source src="how-to-use-line-chat-with-music.mp4" type="video/mp4">
+      Your browser does not support this video.
+    </video>
+
+    <p class="sub" style="margin-top:12px">
+      Download:
+      <a href="how-to-use-two-browser-chat.mp4" download>Two-browser chat demo (with music)</a>
+      ·
+      <a href="how-to-use-line-chat-with-music.mp4" download>Previous walkthrough (with music)</a>
+    </p>
+
+    <div class="steps">
+      <h2>What the video covers</h2>
+      <ol>
+        <li>Choose Desktop or Mobile</li>
+        <li>Log in (or register a new account)</li>
+        <li>Open Chats and send a message</li>
+        <li>Start a voice call from a private chat</li>
+        <li>Manage Friends</li>
+        <li>Use Timeline and Forums</li>
+        <li>Open Groups / group chat</li>
+      </ol>
+    </div>
+  </div>
+</body>
+</html>

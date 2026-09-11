@@ -83,8 +83,9 @@ if ($action === 'send' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 	$stmt->execute([$peerId, $userId]);
 	$isBlockedByPeer = (bool)$stmt->fetch();
 
-	$ins = $pdo->prepare('INSERT INTO messages (sender_id, receiver_id, message_text, reply_to_message_id, message_type) VALUES (?, ?, ?, ?, ?)');
-	$ins->execute([$userId, $peerId, $text, $replyToId, $messageType]);
+	$createdAt = now_utc_sql();
+	$ins = $pdo->prepare('INSERT INTO messages (sender_id, receiver_id, message_text, reply_to_message_id, message_type, created_at) VALUES (?, ?, ?, ?, ?, ?)');
+	$ins->execute([$userId, $peerId, $text, $replyToId, $messageType, $createdAt]);
 	$messageId = $pdo->lastInsertId();
 
 	if (!$isBlockedByPeer) {
@@ -96,10 +97,11 @@ if ($action === 'send' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 		}
 	}
 
+	$timeLabel = format_message_time($createdAt);
 	if ($isBlockedByPeer) {
-		echo json_encode(['ok' => true, 'blocked' => true, 'message' => 'Message sent but rejected by the other user.', 'message_id' => $messageId]);
+		echo json_encode(['ok' => true, 'blocked' => true, 'message' => 'Message sent but rejected by the other user.', 'message_id' => $messageId, 'time' => $timeLabel, 'full_time' => $createdAt]);
 	} else {
-		echo json_encode(['ok' => true, 'blocked' => false, 'message_id' => $messageId]);
+		echo json_encode(['ok' => true, 'blocked' => false, 'message_id' => $messageId, 'time' => $timeLabel, 'full_time' => $createdAt]);
 	}
 	exit;
 }
@@ -159,7 +161,7 @@ if ($action === 'fetch') {
 			'sender' => ((int)$r['sender_id'] === (int)$userId) ? 'me' : 'them',
 			'text' => $r['message_text'] ?? '',
 			'type' => $r['message_type'] ?? 'text',
-			'time' => date('g:i A', strtotime($r['created_at'])),
+			'time' => format_message_time($r['created_at']),
 			'full_time' => $r['created_at'],
 			'edited' => !empty($r['edited_at']),
 			'delivery_status' => $r['delivery_status'] ?? 'sent'

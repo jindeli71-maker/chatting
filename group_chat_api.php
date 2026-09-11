@@ -24,9 +24,10 @@ if ($action === 'send' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 		$stmt = $pdo->prepare('SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?');
 		$stmt->execute([$groupId, $userId]);
 		if ($stmt->fetch()) {
-			$ins = $pdo->prepare('INSERT INTO group_messages (group_id, sender_id, message_text) VALUES (?, ?, ?)');
-			$ins->execute([$groupId, $userId, $text]);
-			echo json_encode(['ok' => true]);
+			$createdAt = now_utc_sql();
+			$ins = $pdo->prepare('INSERT INTO group_messages (group_id, sender_id, message_text, created_at) VALUES (?, ?, ?, ?)');
+			$ins->execute([$groupId, $userId, $text, $createdAt]);
+			echo json_encode(['ok' => true, 'time' => format_message_time($createdAt), 'full_time' => $createdAt]);
 			exit;
 		}
 	}
@@ -58,8 +59,10 @@ if ($action === 'fetch') {
 				$messages[] = [
 					'id' => (string)$r['id'],
 					'sender' => $r['username'],
+					'sender_id' => (int)$r['sender_id'],
 					'text' => $r['message_text'],
-					'time' => $r['created_at'],
+					'time' => format_message_time($r['created_at']),
+					'full_time' => $r['created_at'],
 				];
 			}
 			echo json_encode(['messages' => $messages]);
